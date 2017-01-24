@@ -1,18 +1,21 @@
-VERSION ?= 1.0.0
+VERSION ?= latest
+REGISTRY ?= docker.io
 
 default: build
 
 clean:
-	docker rmi bborbe/mumble:$(VERSION)
+	docker rmi $(REGISTRY)/bborbe/mumble:$(VERSION)
 
 build:
-	docker build --build-arg VERSION=$(VERSION) --no-cache --rm=true -t bborbe/mumble:$(VERSION) .
+	docker build --build-arg VERSION=$(VERSION) --no-cache --rm=true -t $(REGISTRY)/bborbe/mumble:$(VERSION) .
 
 run:
-	docker run -h example.com -p 64738:64738/tcp bborbe/mumble:$(VERSION)
+	docker run \
+	-p 64738:64738/tcp \
+	$(REGISTRY)/bborbe/mumble:$(VERSION)
 
 shell:
-	docker run -i -t bborbe/mumble:$(VERSION) /bin/bash
+	docker run -i -t $(REGISTRY)/bborbe/mumble:$(VERSION) /bin/bash
 
 upload:
-	docker push bborbe/mumble:$(VERSION)
+	docker push $(REGISTRY)/bborbe/mumble:$(VERSION)
