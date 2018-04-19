@@ -1,21 +1,17 @@
-VERSION ?= latest
 REGISTRY ?= docker.io
+IMAGE ?= bborbe/mumble
+ifeq ($(VERSION),)
+	VERSION := $(shell git describe --tags `git rev-list --tags --max-count=1`)
+endif
 
 default: build
 
-clean:
-	docker rmi $(REGISTRY)/bborbe/mumble:$(VERSION)
-
 build:
-	docker build --build-arg VERSION=$(VERSION) --no-cache --rm=true -t $(REGISTRY)/bborbe/mumble:$(VERSION) .
-
-run:
-	docker run \
-	-p 64738:64738/tcp \
-	$(REGISTRY)/bborbe/mumble:$(VERSION)
-
-shell:
-	docker run -i -t $(REGISTRY)/bborbe/mumble:$(VERSION) /bin/bash
+	docker build --no-cache --rm=true -t $(REGISTRY)/$(IMAGE):$(VERSION) .
 
 upload:
-	docker push $(REGISTRY)/bborbe/mumble:$(VERSION)
+	docker push $(REGISTRY)/$(IMAGE):$(VERSION)
+
+clean:
+	docker rmi $(REGISTRY)/$(IMAGE):$(VERSION)
+
